@@ -86,13 +86,19 @@ async def stream_answer(
     """검색된 문서를 컨텍스트로 Claude 답변을 토큰 단위로 스트리밍."""
     model = model or route_model(question)
     context = build_context(docs)
-    lang_note = "한국어" if language == "ko" else ("English" if language == "en" else language)
     today = date.today().isoformat()
+    # 기본은 '질문과 같은 언어'로 답(다국어). language를 명시(en/ko)하면 그 언어로 강제.
+    if language == "en":
+        lang_rule = "Answer in English."
+    elif language == "ko":
+        lang_rule = "질문과 같은 언어로 답해줘(한국어 질문이면 한국어, 영어 질문이면 영어)."
+    else:
+        lang_rule = f"Answer in {language}."
 
     user_content = (
         f"오늘 날짜는 {today}야. '오늘/내일/이번 주' 같은 표현은 이 날짜를 기준으로 해석해.\n\n"
         f"{context}\n\n"
-        f"위 <참고자료>만 근거로, 다음 질문에 {lang_note}로 답해줘. "
+        f"위 <참고자료>만 근거로 다음 질문에 답해줘. {lang_rule} "
         f"사용한 자료 번호를 [1],[2]처럼 표기하고, 자료에 없으면 모른다고 해줘.\n\n"
         f"질문: {question}"
     )
