@@ -14,8 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SourceCitation } from "@/components/SourceCitation";
-import { supabase } from "@/lib/supabase";
-import { streamChat } from "@/lib/api";
+import { fetchSchools, streamChat } from "@/lib/api";
 import type { ChatMessage, School } from "@/lib/types";
 
 const SUGGESTIONS = [
@@ -34,16 +33,10 @@ export function ChatInterface() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    supabase
-      .from("schools")
-      .select("school_code, school_name, school_type, region")
-      .order("school_name")
-      .then(({ data }) => {
-        if (data) {
-          setSchools(data as School[]);
-          if (data.length) setSchool(data[0] as School);
-        }
-      });
+    fetchSchools().then((data) => {
+      setSchools(data);
+      if (data.length) setSchool(data[0]);
+    });
   }, []);
 
   useEffect(() => {
