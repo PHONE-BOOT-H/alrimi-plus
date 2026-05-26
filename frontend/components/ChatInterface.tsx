@@ -17,11 +17,21 @@ import { SourceCitation } from "@/components/SourceCitation";
 import { fetchSchools, streamChat } from "@/lib/api";
 import type { ChatMessage, School } from "@/lib/types";
 
+// 시작 화면 추천 질문
 const SUGGESTIONS = [
   "이번 주 급식 메뉴 알려줘",
   "급식에 우유 들어간 메뉴 있어?",
   "다가오는 학사일정이나 행사 있어?",
   "5월 급식 중에 알레르기 조심할 메뉴는?",
+];
+
+// 답변 후 "이어서 물어보기" 추천 질문 (사용자가 막히지 않도록)
+const FOLLOWUPS = [
+  "다른 날 급식도 알려줘",
+  "이 메뉴 열량은 얼마야?",
+  "땅콩·견과류 알레르기 메뉴 있어?",
+  "시험이나 방학 일정 알려줘",
+  "이번 달 학교 행사 정리해줘",
 ];
 
 export function ChatInterface() {
@@ -163,6 +173,26 @@ export function ChatInterface() {
                 </div>
               </div>
             ))}
+            {!streaming &&
+              messages[messages.length - 1]?.role === "assistant" &&
+              messages[messages.length - 1]?.content && (
+                <div className="flex flex-col gap-2 pt-1">
+                  <p className="text-xs text-muted-foreground">💡 이어서 물어보기</p>
+                  <div className="flex flex-wrap gap-2">
+                    {FOLLOWUPS.map((s) => (
+                      <Button
+                        key={s}
+                        variant="outline"
+                        size="sm"
+                        className="h-auto whitespace-normal py-1.5 text-left"
+                        onClick={() => send(s)}
+                      >
+                        {s}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
             <div ref={bottomRef} />
           </div>
         )}
