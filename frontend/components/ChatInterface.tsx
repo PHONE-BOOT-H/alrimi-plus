@@ -84,10 +84,9 @@ export function ChatInterface() {
         } else if (ev.type === "error") {
           setMessages((m) => {
             const next = [...m];
-            next[next.length - 1] = {
-              ...next[next.length - 1],
-              content: `⚠️ ${ev.message}`,
-            };
+            const last = next[next.length - 1];
+            const prefix = last.content ? last.content + "\n\n" : "";
+            next[next.length - 1] = { ...last, content: `${prefix}⚠️ ${ev.message}` };
             return next;
           });
         }
@@ -95,9 +94,11 @@ export function ChatInterface() {
     } catch {
       setMessages((m) => {
         const next = [...m];
+        const last = next[next.length - 1];
+        const prefix = last.content ? last.content + "\n\n" : "";
         next[next.length - 1] = {
-          ...next[next.length - 1],
-          content: "⚠️ 백엔드에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.",
+          ...last,
+          content: `${prefix}⚠️ 백엔드에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.`,
         };
         return next;
       });

@@ -25,8 +25,12 @@ def get_client() -> anthropic.AsyncAnthropic:
 
 
 def route_model(question: str) -> str:
-    """질문 난이도에 따라 모델 선택. 길거나 분석형이면 Sonnet, 아니면 Haiku."""
+    """질문 난이도에 따라 모델 선택. 분석형 신호가 있으면 Sonnet, 아니면 Haiku.
+
+    (긴 질문을 무조건 Sonnet으로 보내면 긴 입력으로 비용을 강제 증폭시킬 수 있어
+     길이 기준은 제외하고, 분석형 키워드로만 승급한다.)
+    """
     q = question.strip()
-    if len(q) > 120 or any(h in q for h in _COMPLEX_HINTS):
+    if any(h in q for h in _COMPLEX_HINTS):
         return settings.claude_model_complex
     return settings.claude_model_default

@@ -64,7 +64,7 @@ def parse_date_range(q: str, today: date) -> tuple[date, date] | None:
     if ("지난" in q or "저번" in q) and "주" in q:
         ws = _week_start(today) - timedelta(days=7)
         return (ws, ws + timedelta(days=4))
-    if "이번" in q and "주" in q or "금주" in q:
+    if ("이번" in q and "주" in q) or "금주" in q:
         ws = _week_start(today)
         return (ws, ws + timedelta(days=4))  # 이번 주 월~금
 

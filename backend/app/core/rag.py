@@ -1,6 +1,7 @@
 """RAG 파이프라인: 쿼리 임베딩 → pgvector 검색 → Claude 답변 생성(스트리밍)."""
 from __future__ import annotations
 
+import asyncio
 from datetime import date
 from typing import AsyncIterator
 
@@ -31,11 +32,8 @@ def _fetch_meals_by_date(sb, school_code: str, start: date, end: date) -> list[d
     return [{**d, "similarity": 1.0} for d in (res.data or [])]
 
 
-async def retrieve(school_code: str, question: str, match_count: int = MATCH_COUNT) -> list[dict]:
-    """하이브리드 검색: (급식+날짜 질문이면) 해당 날짜 급식 직접조회 + 벡터검색 Top-K, 중복 제거."""
-    emb = await embed_query(question)
-    sb = get_supabase_admin()
-    vector_docs = (
+def _vector_search(sb, school_code: str, emb: list[float], match_count: int) -> list[dict]:
+    return (
         sb.rpc(
             "match_documents",
             {"query_embedding": emb, "p_school_code": school_code, "match_count": match_count},
@@ -45,10 +43,20 @@ async def retrieve(school_code: str, question: str, match_count: int = MATCH_COU
         or []
     )
 
+
+async def retrieve(school_code: str, question: str, match_count: int = MATCH_COUNT) -> list[dict]:
+    """하이브리드 검색: (급식+날짜 질문이면) 해당 날짜 급식 직접조회 + 벡터검색 Top-K, 중복 제거.
+
+    동기 supabase 호출은 to_thread로 감싸 이벤트 루프 블로킹을 피한다(동시 요청 처리).
+    """
+    emb = await embed_query(question)
+    sb = get_supabase_admin()
+    vector_docs = await asyncio.to_thread(_vector_search, sb, school_code, emb, match_count)
+
     date_docs: list[dict] = []
     rng = parse_date_range(question, today_kst())
     if rng and is_meal_query(question):
-        date_docs = _fetch_meals_by_date(sb, school_code, rng[0], rng[1])
+        date_docs = await asyncio.to_thread(_fetch_meals_by_date, sb, school_code, rng[0], rng[1])
 
     # 날짜 직접조회 결과를 앞에, 벡터검색을 뒤에. id 기준 중복 제거.
     seen: set[int] = set()

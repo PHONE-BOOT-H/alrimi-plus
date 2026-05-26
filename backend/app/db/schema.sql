@@ -43,6 +43,10 @@ create index if not exists idx_school_docs_source on school_documents(source_typ
 create index if not exists idx_school_docs_embedding on school_documents
     using ivfflat (embedding vector_cosine_ops) with (lists = 100);
 
+-- 날짜 직접조회(급식 날짜 필터)용 복합 인덱스
+create index if not exists idx_school_docs_date
+    on school_documents(school_code, source_type, valid_from);
+
 -- 3. 사용자 자녀 (Supabase Auth와 연동)
 create table if not exists user_children (
     id uuid primary key default gen_random_uuid(),

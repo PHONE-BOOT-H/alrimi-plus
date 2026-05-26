@@ -13,8 +13,8 @@ app = FastAPI(title="Alrimi+ Backend", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_credentials=False,  # 쿠키/자격증명 미사용 — 불필요한 권한 제거
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
