@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import date
 from typing import AsyncIterator
 
+from app.core.date_intent import is_meal_query, parse_date_range
 from app.core.embedding import embed_query
 from app.core.llm import get_client, route_model
 from app.core.prompts import SYSTEM_PROMPT, build_context
@@ -11,17 +12,55 @@ from app.db.supabase_client import get_supabase_admin
 
 MATCH_COUNT = 6
 MAX_TOKENS = 1536
+_DOC_COLS = "id, school_code, source_type, title, content, metadata, source_url"
+
+
+def _fetch_meals_by_date(sb, school_code: str, start: date, end: date) -> list[dict]:
+    """특정 날짜(범위)의 급식 청크를 직접 조회 (벡터검색이 못 집는 정확한 날짜용)."""
+    res = (
+        sb.table("school_documents")
+        .select(_DOC_COLS)
+        .eq("school_code", school_code)
+        .eq("source_type", "neis_meal")
+        .gte("valid_from", start.isoformat())
+        .lte("valid_from", end.isoformat())
+        .order("valid_from")
+        .limit(12)
+        .execute()
+    )
+    return [{**d, "similarity": 1.0} for d in (res.data or [])]
 
 
 async def retrieve(school_code: str, question: str, match_count: int = MATCH_COUNT) -> list[dict]:
-    """질문을 임베딩해 해당 학교의 유사 문서 Top-K를 가져온다."""
+    """하이브리드 검색: (급식+날짜 질문이면) 해당 날짜 급식 직접조회 + 벡터검색 Top-K, 중복 제거."""
     emb = await embed_query(question)
     sb = get_supabase_admin()
-    res = sb.rpc(
-        "match_documents",
-        {"query_embedding": emb, "p_school_code": school_code, "match_count": match_count},
-    ).execute()
-    return res.data or []
+    vector_docs = (
+        sb.rpc(
+            "match_documents",
+            {"query_embedding": emb, "p_school_code": school_code, "match_count": match_count},
+        )
+        .execute()
+        .data
+        or []
+    )
+
+    date_docs: list[dict] = []
+    rng = parse_date_range(question, date.today())
+    if rng and is_meal_query(question):
+        date_docs = _fetch_meals_by_date(sb, school_code, rng[0], rng[1])
+
+    # 날짜 직접조회 결과를 앞에, 벡터검색을 뒤에. id 기준 중복 제거.
+    seen: set[int] = set()
+    merged: list[dict] = []
+    for d in [*date_docs, *vector_docs]:
+        if d["id"] in seen:
+            continue
+        seen.add(d["id"])
+        merged.append(d)
+    # 날짜 청크는 모두 유지하고, 전체는 너무 길지 않게 제한
+    cap = max(match_count, len(date_docs))
+    return merged[:cap]
 
 
 def format_sources(docs: list[dict]) -> list[dict]:
