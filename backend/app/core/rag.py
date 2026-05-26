@@ -4,7 +4,7 @@ from __future__ import annotations
 from datetime import date
 from typing import AsyncIterator
 
-from app.core.date_intent import is_meal_query, parse_date_range
+from app.core.date_intent import is_meal_query, parse_date_range, today_kst
 from app.core.embedding import embed_query
 from app.core.llm import get_client, route_model
 from app.core.prompts import SYSTEM_PROMPT, build_context
@@ -46,7 +46,7 @@ async def retrieve(school_code: str, question: str, match_count: int = MATCH_COU
     )
 
     date_docs: list[dict] = []
-    rng = parse_date_range(question, date.today())
+    rng = parse_date_range(question, today_kst())
     if rng and is_meal_query(question):
         date_docs = _fetch_meals_by_date(sb, school_code, rng[0], rng[1])
 
@@ -86,7 +86,7 @@ async def stream_answer(
     """검색된 문서를 컨텍스트로 Claude 답변을 토큰 단위로 스트리밍."""
     model = model or route_model(question)
     context = build_context(docs)
-    today = date.today().isoformat()
+    today = today_kst().isoformat()
     # 기본은 '질문과 같은 언어'로 답(다국어). language를 명시(en/ko)하면 그 언어로 강제.
     if language == "en":
         lang_rule = "Answer in English."

@@ -6,7 +6,16 @@
 from __future__ import annotations
 
 import re
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
+
+_KST = ZoneInfo("Asia/Seoul")
+
+
+def today_kst() -> date:
+    """한국 표준시 기준 오늘. (서버가 UTC라도 한국 사용자 기준으로 '오늘' 계산)"""
+    return datetime.now(_KST).date()
+
 
 _MEAL_HINTS = ("급식", "메뉴", "점심", "중식", "조식", "석식", "밥", "식단", "먹", "반찬")
 _WEEKDAYS = {"월": 0, "화": 1, "수": 2, "목": 3, "금": 4, "토": 5, "일": 6}
