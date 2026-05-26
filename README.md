@@ -14,9 +14,10 @@
 - 학교알리미 OpenAPI (학교 공시정보)
 - 학교 홈페이지 범용 크롤러 (공지사항)
 
-## 데모
-- Web: https://alrimi-plus.vercel.app (예정)
-- Backend API: https://huggingface.co/spaces/HANANHAN/alrimi-plus-backend
+## 데모 (라이브)
+- Web: https://alrimi-plus.vercel.app
+- Backend API: https://HANANHAN-alrimi-plus-backend.hf.space/healthz
+- Space: https://huggingface.co/spaces/HANANHAN/alrimi-plus-backend
 
 ## 개발
 [Day 1~11 진행 중]
