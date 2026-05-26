@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN playwright install --with-deps chromium
+# Phase 4(학교 홈페이지 크롤러)에서 필요. 빌드 시간/안정성 위해 그 전까지 비활성화.
+# RUN playwright install --with-deps chromium
 
 COPY app ./app
 
