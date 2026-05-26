@@ -224,6 +224,10 @@ export function ChatInterface() {
           {streaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </Button>
       </form>
+
+      <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+        ℹ️ NEIS·학교알리미 등 공공데이터를 AI가 정리해 드립니다. 알레르기 등 중요한 정보는 반드시 학교에 확인해 주세요.
+      </p>
     </div>
   );
 }
