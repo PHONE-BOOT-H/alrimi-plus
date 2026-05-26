@@ -1,0 +1,32 @@
+"""Anthropic Claude 클라이언트 + 모델 라우팅.
+
+확정 사양: Haiku 4.5 기본, 복잡한 질문은 Sonnet 4.6로 라우팅(비용 최적화).
+"""
+from __future__ import annotations
+
+import anthropic
+
+from app.core.config import settings
+
+_client: anthropic.AsyncAnthropic | None = None
+
+# 복잡/분석형 질문 신호 → Sonnet 라우팅
+_COMPLEX_HINTS = (
+    "분석", "비교", "왜", "이유", "추천", "요약", "정리해", "차이",
+    "추세", "경향", "어떻게 생각", "조언", "설명해줘",
+)
+
+
+def get_client() -> anthropic.AsyncAnthropic:
+    global _client
+    if _client is None:
+        _client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+    return _client
+
+
+def route_model(question: str) -> str:
+    """질문 난이도에 따라 모델 선택. 길거나 분석형이면 Sonnet, 아니면 Haiku."""
+    q = question.strip()
+    if len(q) > 120 or any(h in q for h in _COMPLEX_HINTS):
+        return settings.claude_model_complex
+    return settings.claude_model_default
