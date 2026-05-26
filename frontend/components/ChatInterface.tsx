@@ -14,7 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SourceCitation } from "@/components/SourceCitation";
+import { AllergyPicker } from "@/components/AllergyPicker";
 import { fetchSchools, streamChat } from "@/lib/api";
+import { ALLERGY_STORAGE_KEY } from "@/lib/allergens";
 import type { ChatMessage, School } from "@/lib/types";
 
 // 시작 화면 추천 질문
@@ -40,6 +42,7 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
+  const [allergies, setAllergies] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,7 +50,22 @@ export function ChatInterface() {
       setSchools(data);
       if (data.length) setSchool(data[0]);
     });
+    try {
+      const saved = localStorage.getItem(ALLERGY_STORAGE_KEY);
+      if (saved) setAllergies(JSON.parse(saved));
+    } catch {
+      /* ignore */
+    }
   }, []);
+
+  function updateAllergies(next: string[]) {
+    setAllergies(next);
+    try {
+      localStorage.setItem(ALLERGY_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,7 +79,7 @@ export function ChatInterface() {
     setStreaming(true);
 
     try {
-      for await (const ev of streamChat(school.school_code, q)) {
+      for await (const ev of streamChat(school.school_code, q, "ko", allergies)) {
         if (ev.type === "sources") {
           setMessages((m) => {
             const next = [...m];
@@ -109,16 +127,16 @@ export function ChatInterface() {
 
   return (
     <div className="mx-auto flex h-[calc(100vh-2rem)] max-w-2xl flex-col gap-3 p-4">
-      {/* 헤더 + 학교 선택 */}
+      {/* 헤더: 학교 선택 + 알레르기 설정 */}
       <div className="flex items-center gap-2">
-        <SchoolIcon className="h-5 w-5 text-primary" />
+        <SchoolIcon className="h-5 w-5 shrink-0 text-primary" />
         <Select
           value={school?.school_code}
           onValueChange={(code) =>
             setSchool(schools.find((s) => s.school_code === code) ?? null)
           }
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="flex-1">
             <SelectValue placeholder="학교를 선택하세요" />
           </SelectTrigger>
           <SelectContent>
@@ -129,6 +147,7 @@ export function ChatInterface() {
             ))}
           </SelectContent>
         </Select>
+        <AllergyPicker value={allergies} onChange={updateAllergies} />
       </div>
 
       {/* 메시지 영역 */}

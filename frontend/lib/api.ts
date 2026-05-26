@@ -23,11 +23,12 @@ export async function* streamChat(
   schoolCode: string,
   question: string,
   language = "ko",
+  allergies: string[] = [],
 ): AsyncGenerator<ChatEvent> {
   const res = await fetch(`${BACKEND}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ school_code: schoolCode, question, language }),
+    body: JSON.stringify({ school_code: schoolCode, question, language, allergies }),
   });
 
   if (!res.ok || !res.body) {

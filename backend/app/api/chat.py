@@ -90,6 +90,7 @@ class ChatRequest(BaseModel):
     school_code: str = Field(..., description="NEIS 학교 코드")
     question: str = Field(..., min_length=1, max_length=500)
     language: str = Field(default="ko")
+    allergies: list[str] = Field(default_factory=list, max_length=19, description="사용자 등록 알레르기명")
 
 
 def _ndjson(obj: dict) -> str:
@@ -126,7 +127,9 @@ async def chat(req: ChatRequest, request: Request):
             yield _ndjson({"type": "sources", "sources": format_sources(docs)})
 
             model = route_model(req.question)
-            async for delta in stream_answer(req.question, docs, req.language, model):
+            async for delta in stream_answer(
+                req.question, docs, req.language, model, req.allergies
+            ):
                 yield _ndjson({"type": "delta", "text": delta})
 
             yield _ndjson({"type": "done", "model": model})

@@ -90,8 +90,12 @@ async def stream_answer(
     docs: list[dict],
     language: str = "ko",
     model: str | None = None,
+    allergies: list[str] | None = None,
 ) -> AsyncIterator[str]:
-    """검색된 문서를 컨텍스트로 Claude 답변을 토큰 단위로 스트리밍."""
+    """검색된 문서를 컨텍스트로 Claude 답변을 토큰 단위로 스트리밍.
+
+    allergies: 사용자가 등록한 알레르기명 목록(예: ["우유","밀"]). 급식 답변에서 개인화 경고.
+    """
     model = model or route_model(question)
     context = build_context(docs)
     today = today_kst().isoformat()
@@ -103,11 +107,35 @@ async def stream_answer(
     else:
         lang_rule = f"Answer in {language}."
 
+    # 개인화 알레르기: LLM에 맡기지 않고 코드로 정확히 교차 계산(안전 기능 — false negative 금지)
+    allergy_rule = ""
+    if allergies:
+        per_date: list[str] = []
+        for d in docs:
+            if d.get("source_type") != "neis_meal":
+                continue
+            meta = d.get("metadata") or {}
+            names = set(meta.get("allergy_names") or [])
+            hit = [a for a in allergies if a in names]
+            label = meta.get("date") or (d.get("title") or "")
+            per_date.append(
+                f"- {label}: ⚠️ 주의 항목 = {', '.join(hit)}" if hit else f"- {label}: ✅ 등록 알레르기 없음"
+            )
+        calc = "\n".join(per_date) if per_date else "(급식 메뉴 자료 없음)"
+        allergy_rule = (
+            f"\n\n[개인화 알레르기 분석 — 코드가 계산한 사실이므로 그대로 반영]\n"
+            f"등록 알레르기: {', '.join(allergies)}\n{calc}\n"
+            f"급식 답변이면 위 계산 결과를 그대로 써서, 날짜별로 메뉴 앞에 "
+            f"'⚠️ 내 아이 주의 항목: …' 또는 '✅ 등록 알레르기 없음'을 굵게 표기해. "
+            f"위 계산과 다르게 말하지 마. (급식이 아닌 질문이면 무시)"
+        )
+
     user_content = (
         f"오늘 날짜는 {today}야. '오늘/내일/이번 주' 같은 표현은 이 날짜를 기준으로 해석해.\n\n"
         f"{context}\n\n"
         f"위 <참고자료>만 근거로 다음 질문에 답해줘. {lang_rule} "
-        f"사용한 자료 번호를 [1],[2]처럼 표기하고, 자료에 없으면 모른다고 해줘.\n\n"
+        f"사용한 자료 번호를 [1],[2]처럼 표기하고, 자료에 없으면 모른다고 해줘."
+        f"{allergy_rule}\n\n"
         f"질문: {question}"
     )
 
