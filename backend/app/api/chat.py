@@ -44,6 +44,14 @@ async def chat(req: ChatRequest):
 
             yield _ndjson({"type": "done", "model": model})
         except Exception as e:  # noqa: BLE001 — 스트림 중 오류를 클라이언트에 전달
-            yield _ndjson({"type": "error", "message": f"{type(e).__name__}: {e}"})
+            name = type(e).__name__
+            text = str(e)
+            if "RateLimit" in name or "rate limit" in text.lower() or "429" in text:
+                msg = "지금 요청이 몰려서 잠시 후(약 1분 뒤) 다시 시도해 주세요. 🙏"
+            elif "credit balance" in text.lower():
+                msg = "일시적으로 답변 생성이 어려워요. 잠시 후 다시 시도해 주세요."
+            else:
+                msg = f"답변 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요. ({name})"
+            yield _ndjson({"type": "error", "message": msg})
 
     return StreamingResponse(generate(), media_type="application/x-ndjson")

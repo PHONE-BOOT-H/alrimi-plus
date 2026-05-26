@@ -86,7 +86,7 @@ export function ChatInterface() {
             const next = [...m];
             next[next.length - 1] = {
               ...next[next.length - 1],
-              content: `⚠️ 오류가 발생했어요: ${ev.message}`,
+              content: `⚠️ ${ev.message}`,
             };
             return next;
           });

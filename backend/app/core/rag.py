@@ -10,7 +10,7 @@ from app.core.prompts import SYSTEM_PROMPT, build_context
 from app.db.supabase_client import get_supabase_admin
 
 MATCH_COUNT = 6
-MAX_TOKENS = 1024
+MAX_TOKENS = 1536
 
 
 async def retrieve(school_code: str, question: str, match_count: int = MATCH_COUNT) -> list[dict]:
