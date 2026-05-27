@@ -43,9 +43,10 @@ ul { list-style:none; } li { font-size:17px; line-height:1.55; padding-left:24px
 li:before { content:"›"; position:absolute; left:3px; color:#2563eb; font-weight:800; }
 .foot { position:absolute; bottom:20px; left:58px; right:58px; display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; }
 .shot { border:1px solid #e2e8f0; border-radius:11px; box-shadow:0 8px 26px rgba(15,23,42,.12); }
-.two { display:flex; gap:36px; align-items:center; height:520px; }
-.two .txt { flex:1.08; } .two .vis { flex:.92; display:flex; justify-content:center; align-items:center; height:100%; }
-.two .vis img { max-height:516px; max-width:100%; }
+.two { display:flex; gap:34px; align-items:center; height:548px; }
+.two .txt { flex:1.12; } .two .vis { flex:.88; display:flex; justify-content:center; align-items:center; height:100%; }
+.two .vis img { max-height:528px; max-width:100%; }
+.ex { background:#f8fafc; border:1px solid #e8edf3; border-radius:9px; padding:10px 14px; font-size:12.5px; line-height:1.6; color:#475569; } .ex b { color:#0f172a; }
 .cover { height:100%; display:flex; flex-direction:column; justify-content:center; }
 .badge { display:inline-block; border:1px solid #cbd5e1; border-radius:999px; padding:6px 14px; font-size:13px; color:#475569; margin-bottom:20px; width:fit-content; }
 .pill { display:inline-block; background:#eff6ff; color:#2563eb; border-radius:999px; padding:6px 14px; font-size:14px; font-weight:700; margin:3px 6px 3px 0; }
@@ -135,6 +136,7 @@ P.append(pg(f"""
       <div class="stat">밀 <span>100%</span></div><div class="stat">대두 <span>99.6%</span></div><div class="stat">새우 <span>97.8%</span></div><div class="stat">우유 <span>85.2%</span></div><div class="stat">난류 <span>77.1%</span></div>
     </div>
     <div class="box" style="margin-top:12px">분석 방법 · NEIS 메뉴별 알레르기 코드(1~19) 수집 → 날짜별 급식 단위 통합 → 사용자 프로필과 교차계산<br>한계 · 시범 10개교 표본(전국 일반화 아님), MVP 검증용 분석</div>
+    <div style="margin-top:10px;font-size:13.5px;color:#475569;line-height:1.55"><b style="color:#0f172a">조합 분석</b> · 우유 단독 85.2% · 난류+우유 95.1% · 견과류(땅콩·호두) 4.9%(드물지만 치명적) → 흔한 알레르기일수록 회피 노동↑</div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['CH2']}"></div>
 </div>""", 4))
@@ -146,7 +148,8 @@ P.append(pg(f"""
     <h2>학교 고르고, 물어보면,<br>출처와 함께 답한다</h2>
     <div class="steps"><div class="step"><b>STEP 1</b>우리 학교 선택</div><div class="step"><b>STEP 2</b>자연어 질문</div><div class="step"><b>STEP 3</b>출처·경고 포함 답변</div></div>
     <div style="margin-top:14px;font-size:14.5px;color:#475569;line-height:1.6"><b style="color:#0f172a">답변 구성</b> · 메뉴/영양 · 알레르기 유발 식품 · <b>내 아이 주의 항목</b> · 출처 [1][2] 원문 · (한/영)</div>
-    <div class="callout" style="margin-top:14px"><b>→</b> 표를 뒤지는 게 아니라 대화 한 줄로. 답마다 근거(출처)가 붙는다.</div>
+    <div class="callout" style="margin-top:13px"><b>→</b> 표를 뒤지는 게 아니라 대화 한 줄로. 답마다 근거(출처)가 붙는다.</div>
+    <div class="ex" style="margin-top:12px"><b>실제 질의 예시</b><br>"오늘 급식 뭐 나와?" → 메뉴·영양 + ⚠️ 주의 항목 + 출처[1]<br>"이번 주 학사일정?" → 날짜별 행사 목록 + 출처<br>"파이썬 코드 짜줘" → "학교 정보에 대해서만 답해드려요" (악용 차단)</div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['SOL']}"></div>
 </div>""", 5))
@@ -178,7 +181,11 @@ P.append(pg(f"""
     <div class="callout"><b>여기 →</b> 답변 본문 속 <b>[1] [2]</b> 근거 표기</div>
     <div class="callout"><b>여기 →</b> 하단 <b>출처 원문</b> 카드(날짜·유형)</div>
     <div class="callout"><b>정책 →</b> 검색 결과 없으면 <b>"모른다"</b>고 답</div>
-    <div class="box" style="margin-top:12px">RAG 설계 원칙 · 검색된 공공데이터 청크에 <b>근거가 있는 문장만</b> 생성. 환각 방지 + AI 불신 해소.</div>
+    <ul style="margin-top:10px">
+      <li>출처 카드에 <b>날짜·데이터 유형</b> 표기 → 원본 추적 가능</li>
+      <li>여러 항목은 <b>[1] [2]로 분리</b>해 각각 인용</li>
+    </ul>
+    <div class="box" style="margin-top:11px">RAG 설계 원칙 · 검색된 공공데이터 청크에 <b>근거가 있는 문장만</b> 생성. 환각 방지 + AI 불신 해소.</div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['CAP3']}" style="max-height:516px"></div>
 </div>""", 7))
@@ -194,6 +201,7 @@ P.append(pg(f"""
       <li>알레르기 설정은 <b>이 기기에만 저장</b>(서버 미저장)</li>
       <li>알레르기 19종 + 등록 외 포함 식품도 함께 안내</li>
     </ul>
+    <div class="box" style="margin-top:11px;border-left-color:#ea580c;background:#fff7ed;border-color:#fed7aa;color:#9a3412;font-size:12px;line-height:1.5">NEIS 알레르기 19종 — 난류1·우유2·메밀3·땅콩4·대두5·밀6·고등어7·게8·새우9·돼지고기10·복숭아11·토마토12·아황산류13·호두14·닭고기15·쇠고기16·오징어17·조개18·잣19</div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['CAP2']}" style="max-height:516px"></div>
 </div>""", 8))
@@ -209,7 +217,8 @@ P.append(pg(f"""
       <li>"today / this week / tomorrow" 등 <b>영어 날짜도 인식</b></li>
       <li>다문화 학생 <b>20만 명(전체 4.0%)</b>* 의 정보 접근성</li>
     </ul>
-    <div class="desc" style="margin-top:10px">* 한국교육개발원 2025 교육기본통계</div>
+    <div class="ex" style="margin-top:11px">Q. "What's on the lunch menu today?"<br>A. "Today's lunch includes ... Allergens: milk, soy, wheat, shrimp ... [1]"</div>
+    <div class="desc" style="margin-top:9px">* 한국교육개발원 2025 교육기본통계</div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['CAP4']}" style="max-height:516px"></div>
 </div>""", 9))
@@ -267,11 +276,13 @@ P.append(pg(f"""
   <div class="txt">
     <h2>공공데이터를 '조회'가 아니라<br>'판단'으로 전환</h2>
     <ul>
-      <li>NEIS 급식식단정보: 메뉴·영양·<b>알레르기 코드 19종</b></li>
-      <li>NEIS 학사일정: 날짜·행사</li>
-      <li>처리: 정규화 → 청킹 → 학교별 메타데이터 → 검색/직접조회</li>
+      <li>NEIS 급식식단정보: 일자별 메뉴·열량·영양 + <b>요리별 알레르기 코드 19종</b></li>
+      <li>NEIS 학사일정: 날짜·행사명</li>
+      <li>학교·교육청 코드로 <b>학교별 분리</b> 적재 → 타 학교 혼입 방지</li>
+      <li>처리: 정규화 → 청킹 → 메타데이터 → 검색/날짜 직접조회</li>
       <li>같은 데이터로 "오늘 메뉴"를 넘어 <b>"내 아이가 조심할 항목"</b>으로</li>
     </ul>
+    <div class="statrow" style="margin-top:10px"><div class="stat">시범 10개교</div><div class="stat">초4·중3·고3</div><div class="stat">6개 시도</div><div class="stat">급식 223끼</div><div class="stat">약 490 청크</div></div>
     <div class="box" style="margin-top:10px">차트 · 시범 10개교 급식에서 알레르기 유발 식품 출현 빈도. 흔한 알레르기일수록 회피 부담이 큼을 정량화.</div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['CH1']}"></div>
