@@ -195,10 +195,14 @@ export function ChatInterface() {
                       : "max-w-[90%] rounded-2xl bg-background px-4 py-3 shadow-sm"
                   }
                 >
-                  {m.role === "assistant" && !m.content ? (
+                  {m.role === "user" ? (
+                    <p className="whitespace-pre-wrap break-words text-primary-foreground">
+                      {m.content}
+                    </p>
+                  ) : !m.content ? (
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   ) : (
-                    <div className="prose prose-sm max-w-none break-words dark:prose-invert">
+                    <div className="prose prose-sm max-w-none break-words text-slate-800 prose-headings:text-slate-900 prose-strong:text-slate-900">
                       <ReactMarkdown>{m.content}</ReactMarkdown>
                     </div>
                   )}
