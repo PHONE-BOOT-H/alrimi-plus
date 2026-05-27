@@ -17,12 +17,21 @@ def today_kst() -> date:
     return datetime.now(_KST).date()
 
 
-_MEAL_HINTS = ("급식", "메뉴", "점심", "중식", "조식", "석식", "밥", "식단", "먹", "반찬")
+_MEAL_HINTS = (
+    "급식", "메뉴", "점심", "중식", "조식", "석식", "밥", "식단", "먹", "반찬",
+    # 영어(다국어 지원)
+    "lunch", "meal", "menu", "breakfast", "dinner", "cafeteria", "food", "eat",
+)
 _WEEKDAYS = {"월": 0, "화": 1, "수": 2, "목": 3, "금": 4, "토": 5, "일": 6}
+_EN_WEEKDAYS = {
+    "monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
+    "friday": 4, "saturday": 5, "sunday": 6,
+}
 
 
 def is_meal_query(q: str) -> bool:
-    return any(h in q for h in _MEAL_HINTS)
+    ql = q.lower()
+    return any(h in ql for h in _MEAL_HINTS)
 
 
 def _week_start(d: date) -> date:
@@ -67,6 +76,30 @@ def parse_date_range(q: str, today: date) -> tuple[date, date] | None:
     if ("이번" in q and "주" in q) or "금주" in q:
         ws = _week_start(today)
         return (ws, ws + timedelta(days=4))  # 이번 주 월~금
+
+    # 2-E) 영어 상대 표현 (다국어 지원)
+    ql = q.lower()
+    if "tomorrow" in ql:
+        d = today + timedelta(days=1)
+        return (d, d)
+    if "yesterday" in ql:
+        d = today - timedelta(days=1)
+        return (d, d)
+    if "next week" in ql:
+        ws = _week_start(today) + timedelta(days=7)
+        return (ws, ws + timedelta(days=4))
+    if "last week" in ql:
+        ws = _week_start(today) - timedelta(days=7)
+        return (ws, ws + timedelta(days=4))
+    if "this week" in ql:
+        ws = _week_start(today)
+        return (ws, ws + timedelta(days=4))
+    if "today" in ql:
+        return (today, today)
+    for w, idx in _EN_WEEKDAYS.items():
+        if w in ql:
+            d = _week_start(today) + timedelta(days=idx)
+            return (d, d)
 
     # 3) 요일 ('월요일 급식' 등) → 이번 주 해당 요일
     wm = re.search(r"([월화수목금토일])\s*요일", q)
