@@ -238,7 +238,7 @@ export function ChatInterface() {
           placeholder={school ? "급식·학사일정·공지를 물어보세요…" : "먼저 학교를 선택하세요"}
           disabled={!school || streaming}
           rows={1}
-          className="max-h-32 min-h-[44px] resize-none"
+          className="max-h-32 min-h-[44px] resize-none bg-white text-base text-slate-900 placeholder:text-slate-400"
         />
         <Button type="submit" size="icon" disabled={!school || streaming || !input.trim()}>
           {streaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

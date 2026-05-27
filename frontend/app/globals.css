@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    color-scheme: light; /* 브라우저 자동 다크모드로 색이 반전돼 글자가 안 보이는 것 방지 */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;

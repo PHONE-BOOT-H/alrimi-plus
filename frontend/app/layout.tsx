@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   description: "학교알리미가 진짜 답하는 시대 — 학교 공공데이터 RAG 챗봇",
 };
 
+export const viewport = {
+  colorScheme: "light" as const,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
