@@ -78,6 +78,7 @@ export function ChatInterface() {
     setMessages((m) => [...m, { role: "user", content: q }, { role: "assistant", content: "" }]);
     setStreaming(true);
 
+    let finished = false;
     try {
       for await (const ev of streamChat(school.school_code, q, "ko", allergies)) {
         if (ev.type === "sources") {
@@ -94,12 +95,14 @@ export function ChatInterface() {
             return next;
           });
         } else if (ev.type === "done") {
+          finished = true;
           setMessages((m) => {
             const next = [...m];
             next[next.length - 1] = { ...next[next.length - 1], model: ev.model };
             return next;
           });
         } else if (ev.type === "error") {
+          finished = true;
           setMessages((m) => {
             const next = [...m];
             const last = next[next.length - 1];
@@ -108,6 +111,18 @@ export function ChatInterface() {
             return next;
           });
         }
+      }
+      // 스트림이 done/error 없이 끊긴 경우(네트워크·콜드스타트) — 잘린 답으로 끝나지 않게 안내
+      if (!finished) {
+        setMessages((m) => {
+          const next = [...m];
+          const last = next[next.length - 1];
+          const note = last.content
+            ? `${last.content}\n\n_⚠️ 응답이 중간에 끊겼어요. 다시 시도해 주세요._`
+            : "⚠️ 응답을 받지 못했어요. 잠시 후 다시 시도해 주세요.";
+          next[next.length - 1] = { ...last, content: note };
+          return next;
+        });
       }
     } catch {
       setMessages((m) => {
