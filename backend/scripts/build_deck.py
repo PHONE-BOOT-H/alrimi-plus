@@ -20,8 +20,8 @@ def b64(name: str) -> str:
 
 
 IMG = {k: b64(v) for k, v in {
-    "SOL": "캡처_솔루션답변.png", "CAP2": "캡처2_개인화알레르기.png", "CAP3": "캡처3_출처.png",
-    "CAP4": "캡처4_영어답변.png", "CH1": "차트1_알레르기_출현빈도.png", "CH2": "차트2_프로필별_경고비율.png",
+    "SOL": "캡처_솔루션답변_c.png", "CAP2": "캡처2_개인화알레르기_c.png", "CAP3": "캡처3_출처_c.png",
+    "CAP4": "캡처4_영어답변_c.png", "CH1": "차트1_알레르기_출현빈도.png", "CH2": "차트2_프로필별_경고비율.png",
     "ARCH": "아키텍처_다이어그램.png", "QR": "_qr.png",
 }.items()}
 
@@ -43,9 +43,9 @@ ul { list-style:none; } li { font-size:17px; line-height:1.55; padding-left:24px
 li:before { content:"›"; position:absolute; left:3px; color:#2563eb; font-weight:800; }
 .foot { position:absolute; bottom:20px; left:58px; right:58px; display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; }
 .shot { border:1px solid #e2e8f0; border-radius:11px; box-shadow:0 8px 26px rgba(15,23,42,.12); }
-.two { display:flex; gap:34px; align-items:center; height:548px; }
-.two .txt { flex:1.12; } .two .vis { flex:.88; display:flex; justify-content:center; align-items:center; height:100%; }
-.two .vis img { max-height:528px; max-width:100%; }
+.two { display:flex; gap:32px; align-items:center; height:582px; }
+.two .txt { flex:1; } .two .vis { flex:1.04; display:flex; justify-content:center; align-items:center; height:100%; }
+.two .vis img { max-height:566px; max-width:100%; }
 .ex { background:#f8fafc; border:1px solid #e8edf3; border-radius:9px; padding:10px 14px; font-size:12.5px; line-height:1.6; color:#475569; } .ex b { color:#0f172a; }
 .cover { height:100%; display:flex; flex-direction:column; justify-content:center; }
 .badge { display:inline-block; border:1px solid #cbd5e1; border-radius:999px; padding:6px 14px; font-size:13px; color:#475569; margin-bottom:20px; width:fit-content; }
@@ -89,7 +89,7 @@ P.append(pg(f"""
   <div style="margin-top:22px">
     <span class="b">LIVE 배포 완료</span><span class="b">NEIS 10개교·490청크</span><span class="b">출처 인용 RAG</span><span class="b">알레르기 코드 교차계산</span><span class="b">라이브 검증 12/12</span>
   </div>
-  <div class="qrbox"><img src="{IMG['QR']}"><div><div class="pill" style="font-size:16px;padding:8px 16px">alrimi-plus.vercel.app</div><div class="desc" style="margin-top:6px">QR 스캔 → 지금 바로 사용 가능</div></div></div>
+  <div class="qrbox"><div style="display:flex;flex-direction:column;align-items:center;gap:8px"><img src="{IMG['QR']}"><div style="font-size:14px;font-weight:800;color:#2563eb">alrimi-plus.vercel.app</div></div><div class="desc" style="max-width:300px;line-height:1.55">QR 스캔 또는 위 주소 입력으로<br><b style="color:#0f172a">지금 바로 사용</b>해 볼 수 있어요</div></div>
 </div>""", 1))
 
 P.append(pg(f"""
@@ -187,7 +187,7 @@ P.append(pg(f"""
     </ul>
     <div class="box" style="margin-top:11px">RAG 설계 원칙 · 검색된 공공데이터 청크에 <b>근거가 있는 문장만</b> 생성. 환각 방지 + AI 불신 해소.</div>
   </div>
-  <div class="vis"><img class="shot" src="{IMG['CAP3']}" style="max-height:516px"></div>
+  <div class="vis"><img class="shot" src="{IMG['CAP3']}"></div>
 </div>""", 7))
 
 P.append(pg(f"""
@@ -203,7 +203,7 @@ P.append(pg(f"""
     </ul>
     <div class="box" style="margin-top:11px;border-left-color:#ea580c;background:#fff7ed;border-color:#fed7aa;color:#9a3412;font-size:12px;line-height:1.5">NEIS 알레르기 19종 — 난류1·우유2·메밀3·땅콩4·대두5·밀6·고등어7·게8·새우9·돼지고기10·복숭아11·토마토12·아황산류13·호두14·닭고기15·쇠고기16·오징어17·조개18·잣19</div>
   </div>
-  <div class="vis"><img class="shot" src="{IMG['CAP2']}" style="max-height:516px"></div>
+  <div class="vis"><img class="shot" src="{IMG['CAP2']}"></div>
 </div>""", 8))
 
 P.append(pg(f"""
@@ -220,7 +220,7 @@ P.append(pg(f"""
     <div class="ex" style="margin-top:11px">Q. "What's on the lunch menu today?"<br>A. "Today's lunch includes ... Allergens: milk, soy, wheat, shrimp ... [1]"</div>
     <div class="desc" style="margin-top:9px">* 한국교육개발원 2025 교육기본통계</div>
   </div>
-  <div class="vis"><img class="shot" src="{IMG['CAP4']}" style="max-height:516px"></div>
+  <div class="vis"><img class="shot" src="{IMG['CAP4']}"></div>
 </div>""", 9))
 
 P.append(pg(f"""
@@ -327,7 +327,7 @@ P.append(pg(f"""
   <div class="kicker">알리미+ (Alrimi+)</div>
   <h1 style="margin-top:6px">학교 공공데이터를,<br>학부모가 바로 쓸 <span class="blue">답</span>으로.</h1>
   <div class="desc" style="margin-top:16px;font-size:19px">출처 인용 RAG · 알레르기 코드 기반 경고 · 한/영 접근성 · 라이브 검증 12/12</div>
-  <div class="qrbox" style="margin-top:22px"><img src="{IMG['QR']}" style="width:128px;height:128px"><div><div class="pill" style="font-size:18px;padding:9px 18px">alrimi-plus.vercel.app</div><div class="desc" style="margin-top:8px">QR 스캔 → 직접 사용 · 추천 질문: "오늘 급식 뭐 나와?" / "이번 주 학사일정" / "What's on the lunch menu today?"</div></div></div>
+  <div class="qrbox" style="margin-top:22px"><div style="display:flex;flex-direction:column;align-items:center;gap:9px"><img src="{IMG['QR']}" style="width:134px;height:134px"><div style="font-size:16px;font-weight:800;color:#2563eb">alrimi-plus.vercel.app</div></div><div class="desc" style="max-width:430px;line-height:1.6">QR 스캔 또는 위 주소 입력으로 직접 사용<br>추천 질문: "오늘 급식 뭐 나와?" / "이번 주 학사일정" / "What's on the lunch menu today?"</div></div>
 </div>""", 15))
 
 html = f"<!doctype html><html><head><meta charset='utf-8'><style>@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css');{CSS}</style></head><body>{''.join(P)}</body></html>"
