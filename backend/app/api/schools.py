@@ -11,7 +11,9 @@ from app.db.supabase_client import execute_with_retry, get_supabase_admin
 router = APIRouter(prefix="/api", tags=["schools"])
 
 
-@router.get("/schools")
+# GET + HEAD 모두 허용: UptimeRobot 등 모니터의 기본 HEAD 핑도 DB를 조회하게 해
+# Supabase 무료등급 자동 정지(미사용 1주)를 방지하는 keep-alive로 동작한다.
+@router.api_route("/schools", methods=["GET", "HEAD"])
 def list_schools():
     sb = get_supabase_admin()
     r = execute_with_retry(
