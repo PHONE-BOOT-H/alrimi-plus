@@ -9,7 +9,7 @@ from app.core.date_intent import is_meal_query, parse_date_range, today_kst
 from app.core.embedding import embed_query
 from app.core.llm import get_client, route_model
 from app.core.prompts import SYSTEM_PROMPT, build_context
-from app.db.supabase_client import get_supabase_admin
+from app.db.supabase_client import execute_with_retry, get_supabase_admin
 
 MATCH_COUNT = 6
 MAX_TOKENS = 1536
@@ -18,8 +18,8 @@ _DOC_COLS = "id, school_code, source_type, title, content, metadata, source_url"
 
 def _fetch_meals_by_date(sb, school_code: str, start: date, end: date) -> list[dict]:
     """특정 날짜(범위)의 급식 청크를 직접 조회 (벡터검색이 못 집는 정확한 날짜용)."""
-    res = (
-        sb.table("school_documents")
+    res = execute_with_retry(
+        lambda: sb.table("school_documents")
         .select(_DOC_COLS)
         .eq("school_code", school_code)
         .eq("source_type", "neis_meal")
@@ -33,13 +33,14 @@ def _fetch_meals_by_date(sb, school_code: str, start: date, end: date) -> list[d
 
 
 def _vector_search(sb, school_code: str, emb: list[float], match_count: int) -> list[dict]:
+    """pgvector 의미검색(match_documents RPC). 간헐적 연결 종료에 대비해 재시도로 감쌈."""
     return (
-        sb.rpc(
-            "match_documents",
-            {"query_embedding": emb, "p_school_code": school_code, "match_count": match_count},
-        )
-        .execute()
-        .data
+        execute_with_retry(
+            lambda: sb.rpc(
+                "match_documents",
+                {"query_embedding": emb, "p_school_code": school_code, "match_count": match_count},
+            ).execute()
+        ).data
         or []
     )
 

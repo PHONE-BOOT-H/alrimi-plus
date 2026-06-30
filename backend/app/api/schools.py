@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.db.supabase_client import get_supabase_admin
+from app.db.supabase_client import execute_with_retry, get_supabase_admin
 
 router = APIRouter(prefix="/api", tags=["schools"])
 
@@ -14,8 +14,8 @@ router = APIRouter(prefix="/api", tags=["schools"])
 @router.get("/schools")
 def list_schools():
     sb = get_supabase_admin()
-    r = (
-        sb.table("schools")
+    r = execute_with_retry(
+        lambda: sb.table("schools")
         .select("school_code, school_name, school_type, region")
         .order("school_name")
         .execute()
