@@ -33,3 +33,9 @@ data/cache/
 # Logs
 *.log
 logs/
+
+# One-off local tools and outputs
+insight_report.txt
+backend/scripts/render_check.py
+backend/scripts/strip_deck_b64.py
+backend/scripts/warmup.py
