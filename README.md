@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/제8회_교육_공공데이터_AI_활용대회-장려상-1f6feb" alt="장려상">
+  <img src="https://img.shields.io/badge/제8회_교육_공공데이터_AI_활용대회-장려상_(후원기관장상)-1f6feb" alt="장려상 (후원기관장상)">
   <img src="https://img.shields.io/badge/Next.js-14-black" alt="Next.js 14">
   <img src="https://img.shields.io/badge/FastAPI-Python_3.11-009688" alt="FastAPI">
   <img src="https://img.shields.io/badge/RAG-pgvector_+_Voyage-8a2be2" alt="RAG">
@@ -113,7 +113,7 @@ frontend/
 
 ## 상태
 
-제8회 교육 공공데이터 AI 활용대회(2026) 일반부 **장려상** 수상작입니다. 심사 기간에는 Vercel + Hugging Face Spaces로 실제 운영했다가 심사가 끝난 2026년 7월에 내렸습니다. 위 화면들은 운영 중 캡처입니다.
+제8회 교육 공공데이터 AI 활용대회(2026) 일반부 **장려상(후원기관장상)** 수상작입니다. 심사 기간에는 Vercel + Hugging Face Spaces로 실제 운영했다가 심사가 끝난 2026년 7월에 내렸습니다. 위 화면들은 운영 중 캡처입니다.
 
 급식·알레르기 정보는 NEIS 공개 데이터를 그대로 전달할 뿐이므로 실제 섭취 판단은 반드시 학교에 확인해야 합니다.
 
@@ -123,7 +123,7 @@ frontend/
 
 **Alrimi+** is a RAG chatbot over Korean school public data (NEIS meal plans, academic calendars). Ask "what's for lunch today?" and get an answer with the source rows attached.
 
-Award: Encouragement Prize, 8th Korea Education Public Data AI Contest (2026, open division, solo entry).
+Award: Encouragement Prize (Sponsoring Organization Award), 8th Korea Education Public Data AI Contest (2026, open division, solo entry).
 
 - **Cited answers** — every response shows the retrieved records it used; no invented facts.
 - **Allergy matching in code, not in the model** — the child's registered allergens are intersected with NEIS allergen codes in Python, so a safety-critical result never depends on LLM judgment. Registered allergens stay in browser localStorage.
