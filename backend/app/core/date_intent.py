@@ -27,6 +27,13 @@ _EN_WEEKDAYS = {
     "monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
     "friday": 4, "saturday": 5, "sunday": 6,
 }
+_EN_MONTHS = {
+    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6, "jul": 7, "aug": 8,
+    "sep": 9, "sept": 9, "oct": 10, "nov": 11, "dec": 12,
+}
+_EN_MONTH_ALT = "|".join(sorted(_EN_MONTHS, key=len, reverse=True))
 
 
 def is_meal_query(q: str) -> bool:
@@ -79,6 +86,23 @@ def parse_date_range(q: str, today: date) -> tuple[date, date] | None:
 
     # 2-E) 영어 상대 표현 (다국어 지원)
     ql = q.lower()
+
+    # 2-E-0) 영어 절대 날짜 ('July 7th', 'Jul 7', '7 July') — 한국어 'M월 D일'의 영어판
+    em = re.search(rf"\b({_EN_MONTH_ALT})\.?\s+(\d{{1,2}})(?:st|nd|rd|th)?\b", ql)
+    _en_mo = _en_da = None
+    if em:
+        _en_mo, _en_da = _EN_MONTHS[em.group(1)], int(em.group(2))
+    else:
+        em = re.search(rf"\b(\d{{1,2}})(?:st|nd|rd|th)?\s+({_EN_MONTH_ALT})\b", ql)
+        if em:
+            _en_mo, _en_da = _EN_MONTHS[em.group(2)], int(em.group(1))
+    if _en_mo:
+        try:
+            d = date(today.year, _en_mo, _en_da)
+            return (d, d)
+        except ValueError:
+            pass
+
     if "tomorrow" in ql:
         d = today + timedelta(days=1)
         return (d, d)
