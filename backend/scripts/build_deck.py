@@ -84,10 +84,10 @@ P.append(pg(f"""
 <div class="cover">
   <div class="badge">제8회 교육 공공데이터 AI 활용대회 · 일반부</div>
   <h1>알리미+ <span class="blue">(Alrimi+)</span></h1>
-  <div class="sub" style="margin-top:14px">학교 공공데이터를 <span class="blue">출처와 함께</span> 답하는 AI</div>
-  <div class="desc" style="margin-top:10px;max-width:780px">모든 학부모를 위한 학교 급식·학사정보 챗봇 — 알레르기 맞춤 안내 · 한국어/영어 지원</div>
+  <div class="sub" style="margin-top:14px">급식 <span class="hl">100%</span>에 알레르기 유발식품 — 우리 아이가 매일 확인해야 할 항목을 <span class="blue">출처와 함께</span> 자동 경고하는 AI</div>
+  <div class="desc" style="margin-top:10px;max-width:840px">알레르기·다문화 가정의 매일의 '안전 확인 노동'을 NEIS 공공데이터로 해소 — 학교 급식·학사정보를 출처 인용 RAG로 · 한국어/영어 지원</div>
   <div style="margin-top:22px">
-    <span class="b">LIVE 배포 완료</span><span class="b">NEIS 10개교·490청크</span><span class="b">출처 인용 RAG</span><span class="b">알레르기 코드 교차계산</span><span class="b">라이브 검증 12/12</span>
+    <span class="b">급식 100% 알레르기 포함 · 10개교 분석</span><span class="b">출처 인용 RAG</span><span class="b">알레르기 코드 교차계산</span><span class="b">한·영 지원</span><span class="b">LIVE 검증 12/12</span>
   </div>
   <div class="qrbox"><div style="display:flex;flex-direction:column;align-items:center;gap:8px"><img src="{IMG['QR']}"><div style="font-size:14px;font-weight:800;color:#2563eb">alrimi-plus.vercel.app</div></div><div class="desc" style="max-width:300px;line-height:1.55">QR 스캔 또는 위 주소 입력으로<br><b style="color:#0f172a">지금 바로 사용</b>해 볼 수 있어요</div></div>
 </div>""", 1))
@@ -98,13 +98,13 @@ P.append(pg(f"""
 <table class="t">
   <tr><td class="k" style="width:22%">활용 공공데이터</td><td>NEIS 급식식단정보 · NEIS 학사일정 (교육부 나이스 개방포털)</td></tr>
   <tr><td class="k">주요 필드</td><td>학교 · 날짜 · 메뉴 · 열량/영양 · <b>알레르기 코드(1~19)</b> · 행사명</td></tr>
-  <tr><td class="k">활용 범위</td><td>시범 10개교(초4·중3·고3, 6개 시도) · 급식 223끼 · 약 490개 검색 청크</td></tr>
+  <tr><td class="k">활용 범위</td><td>시범 10개교(초4·중3·고3, 6개 시도) · 급식 223끼 · 약 420개 검색 청크</td></tr>
   <tr><td class="k">AI 활용</td><td>Voyage 임베딩(1024차원) → pgvector 학교별 의미검색 → Claude(Haiku/Sonnet) 답변 생성 → 출처 인용</td></tr>
-  <tr><td class="k">비(非)AI 안전로직</td><td>날짜 직접조회 · <b>사용자 알레르기 ∩ NEIS 알레르기 코드 = 경고</b> (코드 계산)</td></tr>
+  <tr><td class="k">AI×결정론 분담</td><td>날짜 직접조회 · <b>사용자 알레르기 ∩ NEIS 알레르기 코드 = 경고</b> — 안전 기능은 의도적으로 비-LLM(결정론) 계산</td></tr>
   <tr><td class="k">산출물</td><td>학교별 질의응답 · 출처 원문 · 알레르기 맞춤 경고 · 한/영 응답</td></tr>
   <tr><td class="k">개인정보</td><td>알레르기 설정 localStorage(기기 저장) · 서버 미저장 · 학생 개인정보 미수집</td></tr>
 </table>
-<div class="box" style="margin-top:11px">데이터 파이프라인 · 수집 → 정규화 → 청킹 → 학교별 메타데이터 → (검색 / 날짜 직접조회). 생성형 AI는 <b>출처 기반 답변 생성</b>에만, 안전 기능(알레르기)은 <b>코드 교차계산</b>으로 분리.</div>""", 2))
+<div class="box" style="margin-top:11px">데이터 파이프라인 · 수집 → 정규화 → 청킹 → 학교별 메타데이터 → (검색 / 날짜 직접조회). 생성형 AI는 <b>출처 기반 답변 생성·교차언어 검색·의도 파악</b>에, 안전 기능(알레르기)은 <b>결정론적 코드 교차계산</b>에 — <b>어디에 AI를 쓰고 어디에 안 쓸지 가른 것</b>이 설계의 핵심.</div>""", 2))
 
 P.append(pg("""
 <div class="kicker">PROBLEM</div><div class="bar"></div>
@@ -116,7 +116,7 @@ P.append(pg("""
 <div class="grid3" style="margin-top:14px">
   <div class="gcard"><div class="t2">일반 학부모</div><div class="d">급식·학사일정·공지를 여러 출처 오가며 확인 — 번거로움</div></div>
   <div class="gcard"><div class="t2">알레르기 가정</div><div class="d">매일 급식표의 알레르기 번호를 직접 해독 — <b>안전 확인 노동</b></div></div>
-  <div class="gcard"><div class="t2">다문화 가정</div><div class="d">한국어 정보 장벽 — 자녀 학교생활 파악 어려움 (학생 20만명)</div></div>
+  <div class="gcard"><div class="t2">다문화 가정</div><div class="d">한국어 정보 장벽 — 자녀 학교생활 파악 어려움 (다문화 학생 20만 명, 한국교육개발원 2025)</div></div>
 </div>
 <div class="callout" style="margin-top:13px"><b>→</b> 같은 공공데이터인데, 누구에게는 단순 불편, 누구에게는 매일의 부담.</div>
 <div style="margin-top:16px;display:flex;align-items:center;gap:9px">
@@ -133,10 +133,11 @@ P.append(pg(f"""
     <div class="big">100%</div>
     <div class="sub" style="margin-top:8px">시범 10개교 223끼 기준,<br>우유+밀 알레르기 아동은 <span class="hl">모든 급식에 경고 필요</span></div>
     <div class="statrow">
-      <div class="stat">밀 <span>100%</span></div><div class="stat">대두 <span>99.6%</span></div><div class="stat">새우 <span>97.8%</span></div><div class="stat">우유 <span>85.2%</span></div><div class="stat">난류 <span>77.1%</span></div>
+      <div class="stat">밀 <span>100%</span></div><div class="stat">대두 <span>99.6%</span></div><div class="stat">아황산류 <span>98.7%</span></div><div class="stat">새우 <span>97.8%</span></div><div class="stat">우유 <span>85.2%</span></div>
     </div>
-    <div class="box" style="margin-top:12px">분석 방법 · NEIS 메뉴별 알레르기 코드(1~19) 수집 → 날짜별 급식 단위 통합 → 사용자 프로필과 교차계산<br>한계 · 시범 10개교 표본(전국 일반화 아님), MVP 검증용 분석</div>
-    <div style="margin-top:10px;font-size:13.5px;color:#475569;line-height:1.55"><b style="color:#0f172a">조합 분석</b> · 우유 단독 85.2% · 난류+우유 95.1% · 견과류(땅콩·호두) 4.9%(드물지만 치명적) → 흔한 알레르기일수록 회피 노동↑</div>
+    <div class="box" style="margin-top:11px">분석 방법 · NEIS 메뉴별 알레르기 코드(1~19) 수집 → 날짜별 급식 단위 통합 → 사용자 프로필과 교차계산<br>한계 · 시범 10개교 표본(전국 일반화 아님), MVP 검증용 분석</div>
+    <div style="margin-top:9px;font-size:13px;color:#475569;line-height:1.5"><b style="color:#0f172a">조합 분석</b> · 우유 단독 85.2% · 난류+우유 95.1% · 견과류(땅콩·호두) 4.9%(드물지만 치명적)</div>
+    <div style="margin-top:9px;font-size:14px;font-weight:700;color:#9a3412;line-height:1.45">→ 밀·대두는 양념·곡물 특성상 거의 모든 끼니에 등장 — <b>흔한 알레르겐일수록 회피가 불가능</b>하다. 그래서 100%가 매 끼 경고 대상이고, 사람이 매일 19개 코드를 손으로 대조하는 건 비현실적이다. <span style="color:#dc2626">그래서 자동 교차계산 경고가 필요하다.</span></div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['CH2']}"></div>
 </div>""", 4))
@@ -156,7 +157,7 @@ P.append(pg(f"""
 
 P.append(pg("""
 <div class="kicker">WHY DIFFERENT</div><div class="bar"></div>
-<h2>기존 급식 앱과 무엇이 다른가</h2>
+<h2>기존 앱은 '보여주고', 알리미+는 '판단한다'</h2>
 <table class="t">
   <tr><th>기능</th><th>일반 급식앱 / NEIS</th><th>일반 챗봇</th><th>알리미+</th></tr>
   <tr><td class="k">학교별 공공데이터</td><td>있음</td><td class="no">불안정</td><td class="star">있음</td></tr>
@@ -166,7 +167,7 @@ P.append(pg("""
   <tr><td class="k">개인 알레르기 경고</td><td>수동 확인</td><td class="no">추측 위험</td><td class="star">코드 교차계산</td></tr>
   <tr><td class="k">영어 응답(출처 유지)</td><td class="no">제한적</td><td>출처 약함</td><td class="star">출처 유지</td></tr>
 </table>
-<div class="callout" style="margin-top:13px"><b>핵심</b> · 데이터를 '보여주는' 앱이 아니라, 공공데이터를 <b>사용자 상황에 맞게 해석</b>하는 AI. 새 기술이 아니라 <b>문제 재정의</b>가 차별점.</div>
+<div class="callout" style="margin-top:13px"><b>핵심</b> · 데이터를 '보여주는' 앱이 아니라, 공공데이터를 <b>개인 안전 기준으로 해석·경고</b>하는 AI. 경쟁은 기술 자랑이 아니라 — <b>매일 반복되는 확인 부담을 없애는 것</b>이 본질.</div>
 <div class="grid3" style="margin-top:15px">
   <div class="gcard"><div class="t2" style="color:#2563eb">출처 인용</div><div class="d">답변마다 [1][2] + 하단 원문 카드. 근거 없는 문장은 생성하지 않음 → 환각 방지.</div></div>
   <div class="gcard"><div class="t2" style="color:#2563eb">코드 기반 알레르기</div><div class="d">LLM 추측이 아닌 집합 교차계산. 안전 기능은 결정론적으로 동작.</div></div>
@@ -200,6 +201,7 @@ P.append(pg(f"""
       <li>안전 기능은 <b>LLM 추측 금지 → 코드 교차계산</b> (오답=위험)</li>
       <li>알레르기 설정은 <b>이 기기에만 저장</b>(서버 미저장)</li>
       <li>알레르기 19종 + 등록 외 포함 식품도 함께 안내</li>
+      <li>NEIS 코드 오류 가능성 안내 → <b>최종 확인은 학교 영양교사 권장</b></li>
     </ul>
     <div class="box" style="margin-top:11px;border-left-color:#ea580c;background:#fff7ed;border-color:#fed7aa;color:#9a3412;font-size:12px;line-height:1.5">NEIS 알레르기 19종 — 난류1·우유2·메밀3·땅콩4·대두5·밀6·고등어7·게8·새우9·돼지고기10·복숭아11·토마토12·아황산류13·호두14·닭고기15·쇠고기16·오징어17·조개18·잣19</div>
   </div>
@@ -240,10 +242,11 @@ P.append(pg(f"""
 </div>
 <div class="desc" style="margin-top:2px;margin-bottom:11px">Next.js(Vercel) · FastAPI(Hugging Face) · Supabase(pgvector) · Voyage 임베딩 · Anthropic Claude</div>
 <div class="grid3">
-  <div class="gcard"><div class="t2" style="font-size:16px">호출 안전</div><div class="d">IP·전역 레이트리밋 + 일일 캡으로 비용·남용 방어</div></div>
+  <div class="gcard"><div class="t2" style="font-size:16px">호출 안전</div><div class="d">IP·전역 레이트리밋(10분 윈도우) + 콘솔 월 사용량 캡으로 비용·남용 방어</div></div>
   <div class="gcard"><div class="t2" style="font-size:16px">주제·인젝션 가드</div><div class="d">학교 무관 질문·프롬프트 인젝션 사전 차단(키 도용 방지)</div></div>
-  <div class="gcard"><div class="t2" style="font-size:16px">모델 라우팅</div><div class="d">기본 Haiku 4.5, 복잡 질문만 Sonnet 4.6 → 품질·비용 균형</div></div>
-</div>""", 10))
+  <div class="gcard"><div class="t2" style="font-size:16px">모델 라우팅</div><div class="d">기본 Haiku 4.5, 분석형 질문만 Sonnet 4.6 → 품질·비용 균형</div></div>
+</div>
+<div class="box" style="margin-top:11px">설계 파라미터 · 청킹 = 급식 1끼·학사 1건 단위 · 의미검색 Top-K=6 · 하이브리드(날짜 직접조회 + 벡터검색 병합·중복제거) · 라우팅 트리거 = 분석형 키워드(분석·비교·왜·추천 등) 질문만 Sonnet 승급</div>""", 10))
 
 P.append(pg("""
 <div class="kicker">VERIFICATION</div><div class="bar"></div>
@@ -268,7 +271,7 @@ P.append(pg("""
     <tr><td>영어 날짜 미인식</td><td>다국어 파서</td><td class="yes">PASS</td></tr>
   </table>
 </div>
-<div class="callout" style="margin-top:12px">골든 질문 12종 · <b>로컬 12/12 + 라이브 12/12</b> · 독립 AI 코드리뷰로 결함 발견→수정→재검증</div>""", 11))
+<div class="callout" style="margin-top:12px">골든 질문 검증셋(n=12) · <b>정확도 12/12 · 환각 0건 · 주제이탈·인젝션 차단 100%</b> (로컬·라이브 동일) · 독립 AI 코드리뷰로 결함 발견→수정→재검증</div>""", 11))
 
 P.append(pg(f"""
 <div class="kicker">PUBLIC DATA</div><div class="bar"></div>
@@ -282,8 +285,8 @@ P.append(pg(f"""
       <li>처리: 정규화 → 청킹 → 메타데이터 → 검색/날짜 직접조회</li>
       <li>같은 데이터로 "오늘 메뉴"를 넘어 <b>"내 아이가 조심할 항목"</b>으로</li>
     </ul>
-    <div class="statrow" style="margin-top:10px"><div class="stat">시범 10개교</div><div class="stat">초4·중3·고3</div><div class="stat">6개 시도</div><div class="stat">급식 223끼</div><div class="stat">약 490 청크</div></div>
-    <div class="box" style="margin-top:10px">차트 · 시범 10개교 급식에서 알레르기 유발 식품 출현 빈도. 흔한 알레르기일수록 회피 부담이 큼을 정량화.</div>
+    <div class="statrow" style="margin-top:10px"><div class="stat">시범 10개교</div><div class="stat">초4·중3·고3</div><div class="stat">6개 시도</div><div class="stat">급식 223끼</div><div class="stat">약 420 청크</div></div>
+    <div class="box" style="margin-top:10px">학교급별 패턴(실측) · <b>초등 급식은 우유 90% 노출</b>(우유급식)로 우유 알레르기 아동 부담 최대 · <b>중·고는 육류 노출↑</b>(돼지고기 중 80%·고 89%). 같은 알레르기라도 학교급마다 회피 부담이 다름 — 빈도 집계를 넘어 <b>'누가 어디서 더 위험한가'</b>를 데이터로 판별.</div>
   </div>
   <div class="vis"><img class="shot" src="{IMG['CH1']}"></div>
 </div>""", 12))
@@ -298,7 +301,7 @@ P.append(pg("""
   <tr><td class="k">다문화 보호자의 급식 확인</td><td>한국어만 → 어려움</td><td class="star">영어로 질문·답변</td></tr>
   <tr><td class="k">특정 식이 항목(예: 돼지고기) 확인</td><td>메뉴를 하나씩 확인</td><td class="star">질문으로 해당 항목만 추출</td></tr>
 </table>
-<div class="box" style="margin-top:13px">간이 사용성 테스트(n=3~5) 계획 · 과제별 <b>소요시간 · 성공률 · 신뢰도(5점)</b>를 기존 방식과 비교 측정 → 발표 자료에 반영.</div>
+<div class="box" style="margin-top:13px">작업 단계 비교(객관 절차) · '오늘 급식 + 우리 아이 알레르기 확인' 과제 기준 — 기존: 앱 실행→학교 검색→급식표→번호(1~19) 해석→내 아이 항목 대조 <b>(5단계 · 매일 반복)</b> vs 알리미+: 학교 선택→질문 1회 <b>(1단계)</b>. 매일 반복되는 확인 절차를 구조적으로 단축.</div>
 <div class="grid3" style="margin-top:15px">
   <div class="gcard"><div class="t2">확인 시간 단축</div><div class="d">여러 출처를 오가던 확인을 <b>대화 한 줄</b>로</div></div>
   <div class="gcard"><div class="t2">안전 확인 노동 ↓</div><div class="d">매일 급식표 번호 해독을 <b>자동 경고</b>로 대체</div></div>
@@ -326,8 +329,9 @@ P.append(pg(f"""
 <div class="cover" style="align-items:flex-start">
   <div class="kicker">알리미+ (Alrimi+)</div>
   <h1 style="margin-top:6px">학교 공공데이터를,<br>학부모가 바로 쓸 <span class="blue">답</span>으로.</h1>
-  <div class="desc" style="margin-top:16px;font-size:19px">출처 인용 RAG · 알레르기 코드 기반 경고 · 한/영 접근성 · 라이브 검증 12/12</div>
-  <div class="qrbox" style="margin-top:22px"><div style="display:flex;flex-direction:column;align-items:center;gap:9px"><img src="{IMG['QR']}" style="width:134px;height:134px"><div style="font-size:16px;font-weight:800;color:#2563eb">alrimi-plus.vercel.app</div></div><div class="desc" style="max-width:430px;line-height:1.6">QR 스캔 또는 위 주소 입력으로 직접 사용<br>추천 질문: "오늘 급식 뭐 나와?" / "이번 주 학사일정" / "What's on the lunch menu today?"</div></div>
+  <div class="desc" style="margin-top:16px;font-size:19px"><b style="color:#0f172a">같은 공공데이터, 누구에겐 단순 불편 · 누구에겐 매일의 부담.</b> 알리미+는 그 부담을 데이터로 덜어줍니다.</div>
+  <div style="margin-top:14px"><span class="b">10개교 223끼 알레르기 정량분석</span><span class="b">출처 인용 RAG</span><span class="b">코드 기반 알레르기 경고</span><span class="b">한·영 접근성</span><span class="b">LIVE 검증 12/12</span></div>
+  <div class="qrbox" style="margin-top:20px"><div style="display:flex;flex-direction:column;align-items:center;gap:9px"><img src="{IMG['QR']}" style="width:134px;height:134px"><div style="font-size:16px;font-weight:800;color:#2563eb">alrimi-plus.vercel.app</div></div><div class="desc" style="max-width:430px;line-height:1.6">QR 스캔 또는 위 주소 입력으로 직접 사용<br>추천 질문: "오늘 급식 뭐 나와?" / "이번 주 학사일정" / "What's on the lunch menu today?"</div></div>
 </div>""", 15))
 
 html = f"<!doctype html><html><head><meta charset='utf-8'><style>@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css');{CSS}</style></head><body>{''.join(P)}</body></html>"

@@ -96,6 +96,13 @@ def main():
     for stype, c in by_type_meals.most_common():
         p(f"  {stype:<8} {c}건")
     p("")
+    p("[3b] 학교급별 알레르기 출현율 (해당 학교급 급식 대비 %)")
+    p("-" * 60)
+    for stype, tot in by_type_meals.most_common():
+        top = by_type_allergen[stype].most_common(6)
+        parts = " · ".join(f"{nm} {c / tot * 100:.0f}%" for nm, c in top) if tot else "-"
+        p(f"  {stype}({tot}끼): {parts}")
+    p("")
     p("[4] 시범 학교 목록 (지역 다양성)")
     p("-" * 60)
     for s in schools.values():
